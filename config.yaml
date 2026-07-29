@@ -1,0 +1,51 @@
+# config.yaml
+
+dataset:
+  raw_file: "data/raw/dataset.csv"
+  text_column: "text"
+  label_column: "sentiment"
+  test_size: 0.2
+  val_size: 0.1
+  random_state: 42
+
+model:
+  bert_model_name: "bert-base-uncased"
+  max_seq_length: 128
+  num_labels: 3
+  lstm_hidden_size: 256
+  lstm_num_layers: 2
+  lstm_dropout: 0.3
+  bidirectional: true
+  freeze_bert: false
+  use_lora: true
+  lora_r: 8
+  lora_alpha: 32
+  lora_dropout: 0.1
+
+training:
+  batch_size: 32
+  epochs: 1
+  learning_rate: 2e-5
+  weight_decay: 0.01
+  early_stopping_patience: 1
+  device: "cuda"
+  seed: 42
+  per_model:
+    bert:
+      batch_size: 32
+      eval_batch_size: 128
+      num_epochs: 3
+      learning_rate: 2e-5
+      gradient_accumulation_steps: 2
+      use_amp: true
+      freeze_bert: false
+      use_lora: true
+    bert_lstm:
+      batch_size: 32
+      eval_batch_size: 128
+      num_epochs: 5
+      learning_rate: 1e-3
+      gradient_accumulation_steps: 2
+      use_amp: true
+      freeze_bert: true
+      use_lora: false

@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  sentiment-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sentiment-api:latest
+    container_name: sentiment-api
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_TYPE=bert
+    volumes:
+      # Mount trained model checkpoints from the host so they don't need to
+      # be baked into the image (they are large and change frequently).
+      - ./models:/app/models:ro
+    restart: unless-stopped

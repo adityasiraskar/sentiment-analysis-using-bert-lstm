@@ -1,0 +1,64 @@
+data:
+  raw_path: data/raw/dataset.csv
+  processed_dir: data/processed
+  text_column: text
+  label_column: sentiment
+  labels: ["negative", "neutral", "positive"]
+  test_size: 0.2
+  val_size: 0.1
+  random_state: 42
+
+model:
+  bert_model_name: bert-base-uncased
+  max_seq_length: 128
+  num_labels: 3
+  lstm_hidden_size: 256
+  lstm_num_layers: 1
+  lstm_bidirectional: true
+  dropout: 0.3
+  # Optional runtime flags
+  freeze_bert: false     # If true, BERT weights are frozen and used as static embeddings
+  use_lora: true         # If true, apply LoRA adapters (requires `peft` package)
+  lora_r: 8
+  lora_alpha: 32
+  lora_dropout: 0.1
+
+training:
+  # Increased defaults for GPUs with >=16GB (T4 / P100). Tune per-device.
+  batch_size: 32
+  eval_batch_size: 64
+  num_epochs: 3
+  learning_rate: 2.0e-5
+  # Per-model training overrides. Use these to set different batch sizes, lrs, and
+  # epochs for each architecture when training both models in one run.
+  per_model:
+    bert:
+      batch_size: 32
+      eval_batch_size: 128
+      num_epochs: 3
+      learning_rate: 2.0e-5
+      gradient_accumulation_steps: 2
+      use_amp: true
+      freeze_bert: false
+      use_lora: true
+      lora_r: 8
+      lora_alpha: 32
+      lora_dropout: 0.1
+    bert_lstm:
+      batch_size: 32
+      eval_batch_size: 128
+      num_epochs: 5
+      learning_rate: 1.0e-3
+      gradient_accumulation_steps: 2
+      use_amp: true
+      freeze_bert: true
+      use_lora: false
+  lstm_learning_rate: 1.0e-3
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  max_grad_norm: 1.0
+  seed: 42
+  output_dir: models
+
+logging:
+  level: INFO

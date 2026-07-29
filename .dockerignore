@@ -1,0 +1,38 @@
+# Byte-compiled / cache
+.git
+.gitignore
+.pytest_cache
+__pycache__
+.coverage
+
+# virtual environments
+.venv
+venv/
+env/
+
+# Environment variables
+.env
+
+# Data & models (large binary artifacts, keep folder structure via .gitkeep)
+data/processed/*
+!data/processed/.gitkeep
+data/raw/*
+!data/raw/.gitkeep
+models/*
+!models/.gitkeep
+reports/*
+!reports/.gitkeep
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
