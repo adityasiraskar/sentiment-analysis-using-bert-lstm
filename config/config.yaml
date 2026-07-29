@@ -1,9 +1,9 @@
 data:
-  raw_path: data/raw/dataset.csv
+  raw_path: data/raw/sentiment_data.csv
   processed_dir: data/processed
-  text_column: text
-  label_column: sentiment
-  labels: ["negative", "neutral", "positive"]
+  text_column: Comment
+  label_column: Sentiment
+  labels: [0, 1, 2]
   test_size: 0.2
   val_size: 0.1
   random_state: 42

@@ -1,9 +1,9 @@
 # config.yaml
 
 dataset:
-  raw_file: "data/raw/dataset.csv"
-  text_column: "text"
-  label_column: "sentiment"
+  raw_file: "data/raw/sentiment_data.csv"
+  text_column: "Comment"
+  label_column: "Sentiment"
   test_size: 0.2
   val_size: 0.1
   random_state: 42

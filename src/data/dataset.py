@@ -18,10 +18,45 @@ class DataSplits:
     test: pd.DataFrame
 
 
+def _resolve_column_name(df: pd.DataFrame, requested_name: str, aliases: list[str]) -> str:
+    """Resolve a requested column name against the dataframe headers and common aliases."""
+    if requested_name in df.columns:
+        return requested_name
+
+    normalized_columns = {str(column).strip().lower(): column for column in df.columns}
+    for alias in aliases:
+        normalized_alias = str(alias).strip().lower()
+        if normalized_alias in normalized_columns:
+            return normalized_columns[normalized_alias]
+
+    available = ", ".join(map(str, df.columns))
+    raise KeyError(
+        f"Could not find column '{requested_name}'. Available columns: {available}."
+    )
+
+
 def load_raw_dataframe(csv_path: str, text_column: str, label_column: str) -> pd.DataFrame:
-    """Load the raw CSV, drop empty rows, and clean the text column."""
+    """Load the raw CSV, normalize common schema variations, and clean the text column."""
     path = resolve_path(csv_path)
     df = pd.read_csv(path)
+
+    resolved_text_col = _resolve_column_name(
+        df,
+        text_column,
+        ["text", "comment", "content", "tweet", "review", "sentence"],
+    )
+    resolved_label_col = _resolve_column_name(
+        df,
+        label_column,
+        ["sentiment", "label", "target", "class", "sentiment_label"],
+    )
+
+    if resolved_text_col != text_column:
+        df = df.rename(columns={resolved_text_col: text_column})
+    if resolved_label_col != label_column:
+        df = df.rename(columns={resolved_label_col: label_column})
+
+    df = df[[text_column, label_column]].copy()
     df = df.dropna(subset=[text_column, label_column]).reset_index(drop=True)
     df[text_column] = df[text_column].astype(str)
     df = df[df[text_column].str.len() > 0].reset_index(drop=True)

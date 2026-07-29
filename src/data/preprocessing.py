@@ -92,9 +92,20 @@ def clean_text(text: str) -> str:
     return text
 
 
-def label_to_id(label: str) -> int:
-    """Map a string sentiment label to its integer ID."""
+def label_to_id(label: str | int) -> int:
+    """Map a string or numeric sentiment label to its integer ID."""
+    if isinstance(label, bool):
+        raise ValueError(f"Invalid label '{label}'")
+
+    if isinstance(label, int):
+        return label
+
+    if isinstance(label, float) and label.is_integer():
+        return int(label)
+
     key = str(label).strip().lower()
+    if key.isdigit():
+        return int(key)
     if key not in LABEL2ID:
         raise ValueError(
             f"Unknown label '{label}'. Expected one of {list(LABEL2ID.keys())}"

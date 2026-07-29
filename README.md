@@ -61,6 +61,15 @@ pip install -r requirements.txt
 
 `data/raw/dataset.csv` ships with **10 sample rows** (`text, sentiment`) purely so the pipeline can be run end-to-end immediately. Replace it with a full dataset (same two columns, labels in `{positive, negative, neutral}`) before training a model you intend to actually use — 10 rows is only enough to exercise the code path, not to learn a meaningful classifier.
 
+To download a larger Kaggle dataset for this project, you can use:
+
+```bash
+#!/bin/bash
+kaggle datasets download -d abdelmalekeladjelet/sentiment-analysis-dataset
+```
+
+Place the downloaded CSV in `data/raw/sentiment_data.csv` so the current config picks it up automatically.
+
 ## Training
 
 Fine-tune either or both architectures (uses `bert-base-uncased` and a GPU if available; falls back to CPU automatically). Configuration is read from `config/config.yaml` with optional overrides from `config.yaml` in the repo root — the loader merges defaults then overrides.
