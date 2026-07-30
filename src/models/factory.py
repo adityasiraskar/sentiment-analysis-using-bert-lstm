@@ -91,6 +91,7 @@ def load_model(model_dir: str | Path, device: str | torch.device = "cpu"):
     Returns (model, tokenizer, config_dict)
     """
     model_dir = Path(model_dir)
+    target_device = torch.device(device)
 
     with open(model_dir / MODEL_CONFIG_FILENAME, "r", encoding="utf-8") as f:
         model_config = json.load(f)
@@ -121,8 +122,11 @@ def load_model(model_dir: str | Path, device: str | torch.device = "cpu"):
     else:
         raise ValueError(f"Unknown model_name '{model_name}' in saved config.")
 
-    state_dict = torch.load(model_dir / MODEL_FILENAME, map_location=device)
+    # map_location only controls where checkpoint tensors are deserialized; it
+    # does not move the newly instantiated model module itself.
+    state_dict = torch.load(model_dir / MODEL_FILENAME, map_location="cpu")
     model.load_state_dict(state_dict)
+    model.to(target_device)
 
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
     return model, tokenizer, model_config
