@@ -137,7 +137,7 @@ To enable LoRA or freezing, edit `config/config.yaml` or set `SENTIMENT_CONFIG_P
 ## Running the API
 
 ```powershell
-uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn api.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 Set `MODEL_TYPE=bert_lstm` (and optionally `MODEL_DIR`) to serve the other checkpoint. Endpoints:

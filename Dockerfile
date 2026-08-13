@@ -15,10 +15,21 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # --- Python dependencies ---
-COPY requirements.txt .
-# CPU-only torch keeps the image small; override with a CUDA base image/
-# extra requirements if GPU inference is required.
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements-api.txt .
+# CPU-only torch keeps the API image smaller and avoids downloading CUDA
+# runtime packages during Docker builds.
+ARG TORCH_VERSION=2.2.2+cpu
+RUN pip install --no-cache-dir --timeout 1000 --retries 10 \
+        --trusted-host pypi.org \
+        --trusted-host files.pythonhosted.org \
+        --trusted-host download.pytorch.org \
+        --index-url https://download.pytorch.org/whl/cpu \
+        --extra-index-url https://pypi.org/simple \
+        "torch==${TORCH_VERSION}" \
+    && pip install --no-cache-dir --timeout 1000 --retries 10 \
+        --trusted-host pypi.org \
+        --trusted-host files.pythonhosted.org \
+        -r requirements-api.txt
 
 # Pre-download NLTK corpora used by src/data/preprocessing.py so the
 # container works fully offline at runtime.
